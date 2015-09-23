@@ -1617,6 +1617,7 @@ Branch.prototype.link = wrap(callback_params.CALLBACK_ERR_DATA, function(a, b) {
 });
 Branch.prototype.sendSMS = wrap(callback_params.CALLBACK_ERR, function(a, b, c, d) {
   function e(c) {
+    console.log(c);
     f._api(resources.SMSLinkSend, {link_url:c, phone:b}, a);
   }
   var f = this;

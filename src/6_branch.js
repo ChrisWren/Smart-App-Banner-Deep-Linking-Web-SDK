@@ -1046,6 +1046,7 @@ Branch.prototype['sendSMS'] = wrap(
 		}
 
 		function sendSMS(click_id) {
+			console.log(click_id);
 			self._api(
 				resources.SMSLinkSend, {
 					"link_url": click_id,
