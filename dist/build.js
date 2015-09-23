@@ -1127,7 +1127,7 @@ Server.prototype.XHRRequest = function(a, b, c, d, e) {
     e(Error(utils.messages.timeout), null, 504);
   };
   TITANIUM_BUILD ? (f.onerror = function(a) {
-    402 === f.status ? e(Error("Not enough credits to redeem."), null, f.status) : a.error ? e(Error(a.error), null, f.status) : e(Error("Error in API: " + f.status), null, f.status);
+    402 === f.status ? e(Error("Not enough credits to redeem."), null, f.status) : e(Error(a.error || "Error in API: " + f.status), null, f.status);
   }, f.onload = function() {
     if (200 === f.status) {
       try {
@@ -1138,7 +1138,9 @@ Server.prototype.XHRRequest = function(a, b, c, d, e) {
     } else {
       402 === f.status ? e(Error("Not enough credits to redeem."), null, f.status) : "4" !== f.status.toString().substring(0, 1) && "5" !== f.status.toString().substring(0, 1) || e(Error("Error in API: " + f.status), null, f.status);
     }
-  }) : f.onreadystatechange = function() {
+  }) : (f.onerror = function(a) {
+    e(Error(a.error || "Error in API: " + f.status), null, f.status);
+  }, f.onreadystatechange = function() {
     if (4 === f.readyState) {
       if (200 === f.status) {
         try {
@@ -1150,7 +1152,7 @@ Server.prototype.XHRRequest = function(a, b, c, d, e) {
         402 === f.status ? e(Error("Not enough credits to redeem."), null, f.status) : "4" !== f.status.toString().substring(0, 1) && "5" !== f.status.toString().substring(0, 1) || e(Error("Error in API: " + f.status), null, f.status);
       }
     }
-  };
+  });
   try {
     f.open(c, a, !0), f.timeout = TIMEOUT, f.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"), f.send(b);
   } catch (g) {
