@@ -818,13 +818,6 @@ utils.base64encode = function(a) {
   }
   return b;
 };
-utils.loadJavascriptFile = function(a) {
-  var b = document.createElement("script");
-  b.type = "text/javascript";
-  b.async = !0;
-  b.src = a;
-  document.getElementsByTagName("head")[0].appendChild(b);
-};
 // Input 5
 var resources = {}, validationTypes = {OBJECT:0, STRING:1, NUMBER:2, ARRAY:3, BOOLEAN:4}, _validator;
 function validator(a, b) {
@@ -1550,7 +1543,7 @@ Branch.prototype.deepviewInit = wrap(callback_params.CALLBACK_ERR_DATA, function
   this._init(function(b, c) {
     b && a(b);
   }, this.branch_key, c);
-  utils.loadJavascriptFile(function(a, b) {
+  this._server.createScript(function(a, b) {
     var c = "https://bnc.lt/a/" + a + "?";
     if (b) {
       for (var g in b) {

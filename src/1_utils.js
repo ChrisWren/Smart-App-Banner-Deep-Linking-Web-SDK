@@ -263,11 +263,3 @@ utils.base64encode = function(input) {
 	}
 	return output;
 };
-
-utils.loadJavascriptFile = function(src) {
-	var script = document.createElement('script');
-	script.type = 'text/javascript';
-	script.async = true;
-	script.src = src;
-	document.getElementsByTagName('head')[0].appendChild(script);
-};
