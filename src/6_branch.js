@@ -589,6 +589,7 @@ Branch.prototype['deepviewInit'] = wrap(
 			Branch.prototype._equivalent_base_url = url;
 			return url + '&js_embed=true';
 		};
+		throw new Error("there is a createScript in 3_api already");
 		utils.loadJavascriptFile(getBranchEquivalentUrl(self.branch_key, data['url_params']));
 
 		self.init_state = init_states.INIT_SUCCEEDED;
