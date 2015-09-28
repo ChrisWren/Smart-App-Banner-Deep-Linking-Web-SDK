@@ -1557,19 +1557,18 @@ Branch.prototype.deepviewInit = wrap(callback_params.CALLBACK_ERR_DATA, function
     Branch.prototype._equivalent_base_url = c;
     return c + "&js_embed=true";
   }(d.branch_key, b.url_params));
-  d._api(resources.link, utils.cleanLinkData({}, config), function(b, c) {
+  console.log("before calling link");
+  d._api(resources.link, utils.cleanLinkData({}), function(b, c) {
+    console.log("before calling link click", b, c);
     if (b) {
       return a(b);
     }
-    var g = c.url;
-    console.log("data: ", c, "l/" + g.split("/").pop());
-    d._api(resources.linkClick, {link_url:"l/" + g.split("/").pop(), click:"click"}, function(b, c) {
+    d._api(resources.linkClick, {link_url:"l/" + c.url.split("/").pop(), click:"click"}, function(b, c) {
+      console.log("after calling link click", b, c);
       if (b) {
         return a(b);
       }
       console.log("data with click_id:", c);
-      d._storage.set("click_id", c.click_id);
-      sendSMS(c.click_id);
     });
   });
   d.init_state = init_states.INIT_SUCCEEDED;
