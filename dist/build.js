@@ -1533,7 +1533,8 @@ Branch.prototype.init = wrap(callback_params.CALLBACK_ERR_DATA, function(a, b, c
   this._init(a, b, c);
 }, !0);
 Branch.prototype.deepviewInit = wrap(callback_params.CALLBACK_ERR_DATA, function(a, b, c) {
-  if (this.init_state === init_states.INIT_PENDING) {
+  var d = this;
+  if (d.init_state === init_states.INIT_PENDING) {
     throw Error("Another init in progress");
   }
   if (!b) {
@@ -1542,22 +1543,37 @@ Branch.prototype.deepviewInit = wrap(callback_params.CALLBACK_ERR_DATA, function
   if (!b.branch_key || !utils.isKey(b.branch_key)) {
     throw Error("Please provide a valid data['branch_key']");
   }
-  this.branch_key = b.branch_key;
+  d.branch_key = b.branch_key;
   this._init(function(b, c) {
     b && a(b);
-  }, this.branch_key, c);
+  }, d.branch_key, c);
   this._server.createScript(function(a, b) {
     var c = "https://bnc.lt/a/" + a + "?";
     if (b) {
-      for (var g in b) {
-        b.hasOwnProperty(g) && (c += "&" + encodeURIComponent(g) + "=" + encodeURIComponent(b[g]));
+      for (var d in b) {
+        b.hasOwnProperty(d) && (c += "&" + encodeURIComponent(d) + "=" + encodeURIComponent(b[d]));
       }
     }
     Branch.prototype._equivalent_base_url = c;
     return c + "&js_embed=true";
-  }(this.branch_key, b.url_params));
-  this.init_state = init_states.INIT_SUCCEEDED;
-  a(this._equivalent_base_url, null);
+  }(d.branch_key, b.url_params));
+  d._api(resources.link, utils.cleanLinkData({}, config), function(b, c) {
+    if (b) {
+      return a(b);
+    }
+    var g = c.url;
+    console.log("data: ", c, "l/" + g.split("/").pop());
+    d._api(resources.linkClick, {link_url:"l/" + g.split("/").pop(), click:"click"}, function(b, c) {
+      if (b) {
+        return a(b);
+      }
+      console.log("data with click_id:", c);
+      d._storage.set("click_id", c.click_id);
+      sendSMS(c.click_id);
+    });
+  });
+  d.init_state = init_states.INIT_SUCCEEDED;
+  a(d._equivalent_base_url, null);
 }, !0);
 Branch.prototype.data = wrap(callback_params.CALLBACK_ERR_DATA, function(a) {
   var b = utils.whiteListSessionData(session.get(this._storage));
@@ -1634,7 +1650,7 @@ Branch.prototype.sendSMS = wrap(callback_params.CALLBACK_ERR, function(a, b, c, 
   d.make_new_link = d.make_new_link || !1;
   c.channel && "app banner" !== c.channel || (c.channel = "sms");
   var g = f._referringLink();
-  g && !d.make_new_link ? e(g.substring(g.lastIndexOf("/") + 1, g.length)) : f._api(resources.link, utils.cleanLinkData(c, config), function(b, c) {
+  g && !d.make_new_link ? e(g.substring(g.lastIndexOf("/") + 1, g.length)) : (console.log(utils.cleanLinkData(c, config), c, config), f._api(resources.link, utils.cleanLinkData(c, config), function(b, c) {
     if (b) {
       return a(b);
     }
@@ -1645,7 +1661,7 @@ Branch.prototype.sendSMS = wrap(callback_params.CALLBACK_ERR, function(a, b, c, 
       f._storage.set("click_id", c.click_id);
       e(c.click_id);
     });
-  });
+  }));
 });
 Branch.prototype.referrals = wrap(callback_params.CALLBACK_ERR_DATA, function(a) {
   this._api(resources.referrals, {}, a);

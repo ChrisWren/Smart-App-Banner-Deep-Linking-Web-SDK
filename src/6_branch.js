@@ -591,6 +591,33 @@ Branch.prototype['deepviewInit'] = wrap(
 		};
 		this._server.createScript(getBranchEquivalentUrl(self.branch_key, data['url_params']));
 
+		self._api(
+			resources.link,
+			utils.cleanLinkData({}, config),
+			function(err, data) {
+				if (err) {
+					return done(err);
+				}
+				var url = data['url'];
+				console.log('data: ', data, 'l/' + url.split('/').pop());
+				self._api(
+					resources.linkClick,
+					{
+						"link_url": 'l/' + url.split('/').pop(),
+						"click": "click"
+					},
+					function(err, data) {
+						if (err) {
+							return done(err);
+						}
+						console.log('data with click_id:', data);
+						self._storage.set('click_id', data['click_id']);
+						// sendSMS(data['click_id']);
+					}
+				);
+			}
+		);
+
 		self.init_state = init_states.INIT_SUCCEEDED;
 
 		done(self._equivalent_base_url, null);
@@ -1061,6 +1088,7 @@ Branch.prototype['sendSMS'] = wrap(
 			));
 		}
 		else {
+			console.log(utils.cleanLinkData(linkData, config), linkData, config);
 			self._api(
 				resources.link,
 				utils.cleanLinkData(linkData, config),
