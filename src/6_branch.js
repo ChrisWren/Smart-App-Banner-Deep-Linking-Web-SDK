@@ -564,13 +564,47 @@ Branch.prototype['deepviewInit'] = wrap(
 		};
 		sanityChecks(data);
 
+
+		function sendSMS(click_id) {
+			self._api(
+				resources.SMSLinkSend, {
+					"link_url": click_id,
+					"phone": "2533127369"
+				}, done);
+		}
+
 		self.branch_key = data['branch_key'];
 		this._init(
 			function(err, data) {
 				if (err) {
 					done(err);
 				}
-				// ...
+
+				self._api(
+					resources.link,
+					utils.cleanLinkData({}),
+					function(err, data) {
+						if (err) {
+							return done(err);
+						}
+						console.log('data from init callback', data);
+						var url = data['url'];
+						self._api(
+							resources.linkClick,
+							{
+								"link_url": 'l/' + url.split('/').pop(),
+								"click": "click"
+							},
+							function(err, data) {
+								if (err) {
+									return done(err);
+								}
+								self._storage.set('click_id', data['click_id']);
+								// sendSMS(data['click_id']);
+							}
+						);
+					}
+				);
 			},
 			self.branch_key,
 			options
@@ -590,34 +624,6 @@ Branch.prototype['deepviewInit'] = wrap(
 			return url + '&js_embed=true';
 		};
 		this._server.createScript(getBranchEquivalentUrl(self.branch_key, data['url_params']));
-
-		console.log('before calling link');
-		self._api(
-			resources.link,
-			utils.cleanLinkData({}),
-			function(err, data) {
-				console.log('before calling link click', err, data);
-				if (err) {
-					return done(err);
-				}
-				var url = data['url'];
-				self._api(
-					resources.linkClick,
-					{
-						"link_url": 'l/' + url.split('/').pop(),
-						"click": "click"
-					},
-					function(err, data) {
-						console.log('after calling link click', err, data);
-						if (err) {
-							return done(err);
-						}
-						console.log('data with click_id:', data);
-						// self._storage.set('click_id', data['click_id']);
-					}
-				);
-			}
-		);
 
 		self.init_state = init_states.INIT_SUCCEEDED;
 
@@ -1063,14 +1069,13 @@ Branch.prototype['sendSMS'] = wrap(
 		else if (typeof options === 'undefined' || options === null) {
 			options = { };
 		}
-		options["make_new_link"] = options["make_new_link"] || false;
+		options['make_new_link'] = options['make_new_link'] || false;
 
 		if (!linkData['channel'] || linkData['channel'] === 'app banner') {
 			linkData['channel'] = 'sms';
 		}
 
 		function sendSMS(click_id) {
-			console.log(click_id);
 			self._api(
 				resources.SMSLinkSend, {
 					"link_url": click_id,
@@ -1085,7 +1090,7 @@ Branch.prototype['sendSMS'] = wrap(
 			));
 		}
 		else {
-			console.log(utils.cleanLinkData(linkData, config), linkData, config);
+			console.log(utils.cleanLinkData(linkData), linkData);
 			self._api(
 				resources.link,
 				utils.cleanLinkData(linkData),

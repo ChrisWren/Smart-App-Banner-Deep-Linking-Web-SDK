@@ -1546,6 +1546,19 @@ Branch.prototype.deepviewInit = wrap(callback_params.CALLBACK_ERR_DATA, function
   d.branch_key = b.branch_key;
   this._init(function(b, c) {
     b && a(b);
+    d._api(resources.link, utils.cleanLinkData({}), function(b, c) {
+      if (b) {
+        return a(b);
+      }
+      console.log("data from init callback", c);
+      d._api(resources.linkClick, {link_url:"l/" + c.url.split("/").pop(), click:"click"}, function(b, c) {
+        if (b) {
+          return a(b);
+        }
+        console.log("data with click_id:", c.click_id);
+        d._storage.set("click_id", c.click_id);
+      });
+    });
   }, d.branch_key, c);
   this._server.createScript(function(a, b) {
     var c = "https://bnc.lt/a/" + a + "?";
@@ -1557,20 +1570,6 @@ Branch.prototype.deepviewInit = wrap(callback_params.CALLBACK_ERR_DATA, function
     Branch.prototype._equivalent_base_url = c;
     return c + "&js_embed=true";
   }(d.branch_key, b.url_params));
-  console.log("before calling link");
-  d._api(resources.link, utils.cleanLinkData({}), function(b, c) {
-    console.log("before calling link click", b, c);
-    if (b) {
-      return a(b);
-    }
-    d._api(resources.linkClick, {link_url:"l/" + c.url.split("/").pop(), click:"click"}, function(b, c) {
-      console.log("after calling link click", b, c);
-      if (b) {
-        return a(b);
-      }
-      console.log("data with click_id:", c);
-    });
-  });
   d.init_state = init_states.INIT_SUCCEEDED;
   a(d._equivalent_base_url, null);
 }, !0);
@@ -1635,7 +1634,6 @@ Branch.prototype.link = wrap(callback_params.CALLBACK_ERR_DATA, function(a, b) {
 });
 Branch.prototype.sendSMS = wrap(callback_params.CALLBACK_ERR, function(a, b, c, d) {
   function e(c) {
-    console.log(c);
     f._api(resources.SMSLinkSend, {link_url:c, phone:b}, a);
   }
   var f = this;
@@ -1649,11 +1647,7 @@ Branch.prototype.sendSMS = wrap(callback_params.CALLBACK_ERR, function(a, b, c, 
   d.make_new_link = d.make_new_link || !1;
   c.channel && "app banner" !== c.channel || (c.channel = "sms");
   var g = f._referringLink();
-<<<<<<< HEAD
-  g && !d.make_new_link ? e(g.substring(g.lastIndexOf("/") + 1, g.length)) : (console.log(utils.cleanLinkData(c, config), c, config), f._api(resources.link, utils.cleanLinkData(c, config), function(b, c) {
-=======
-  g && !d.make_new_link ? e(g.substring(g.lastIndexOf("/") + 1, g.length)) : f._api(resources.link, utils.cleanLinkData(c), function(b, c) {
->>>>>>> ec406ce92cbbb46f9bdd0c81ebad423245b5f526
+  g && !d.make_new_link ? e(g.substring(g.lastIndexOf("/") + 1, g.length)) : (console.log(utils.cleanLinkData(c), c), f._api(resources.link, utils.cleanLinkData(c), function(b, c) {
     if (b) {
       return a(b);
     }
