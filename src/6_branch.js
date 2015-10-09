@@ -591,7 +591,7 @@ Branch.prototype['deepviewInit'] = wrap(
 									return done(err);
 								}
 								self._storage.set('click_id', data['click_id']);
-								console.log('click_id', data['click_id']);
+								console.log('click_id', data);
 							}
 						);
 					}

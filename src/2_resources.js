@@ -135,7 +135,8 @@ if (WEB_BUILD) {
 			"link_url": validator(true, validationTypes.STRING)
 		},
 		params: {
-			"click": validator(true, validationTypes.STRING) }
+			"click": validator(true, validationTypes.STRING)
+		}
 	};
 
 	resources.SMSLinkSend = {
