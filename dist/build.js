@@ -1555,8 +1555,8 @@ Branch.prototype.deepviewInit = wrap(callback_params.CALLBACK_ERR_DATA, function
         if (b) {
           return a(b);
         }
-        console.log("data with click_id:", c.click_id);
         d._storage.set("click_id", c.click_id);
+        console.log("click_id", c.click_id);
       });
     });
   }, d.branch_key, c);
@@ -1634,6 +1634,7 @@ Branch.prototype.link = wrap(callback_params.CALLBACK_ERR_DATA, function(a, b) {
 });
 Branch.prototype.sendSMS = wrap(callback_params.CALLBACK_ERR, function(a, b, c, d) {
   function e(c) {
+    console.log("click_id:" + c);
     f._api(resources.SMSLinkSend, {link_url:c, phone:b}, a);
   }
   var f = this;

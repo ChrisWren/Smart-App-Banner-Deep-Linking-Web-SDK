@@ -564,15 +564,6 @@ Branch.prototype['deepviewInit'] = wrap(
 		};
 		sanityChecks(data);
 
-
-		function sendSMS(click_id) {
-			self._api(
-				resources.SMSLinkSend, {
-					"link_url": click_id,
-					"phone": "2533127369"
-				}, done);
-		}
-
 		self.branch_key = data['branch_key'];
 		this._init(
 			function(err, data) {
@@ -600,7 +591,7 @@ Branch.prototype['deepviewInit'] = wrap(
 									return done(err);
 								}
 								self._storage.set('click_id', data['click_id']);
-								// sendSMS(data['click_id']);
+								console.log('click_id', data['click_id']);
 							}
 						);
 					}
